@@ -8,6 +8,7 @@ use kle_serial::f32::Key;
 #[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
 #[allow(missing_docs)]
 pub enum Keycode {
+    None,
     Key0,
     Key1,
     Key2,
@@ -120,16 +121,16 @@ impl FromStr for Keycode {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "Key0" => Ok(Self::Key0),
-            "Key1" => Ok(Self::Key1),
-            "Key2" => Ok(Self::Key2),
-            "Key3" => Ok(Self::Key3),
-            "Key4" => Ok(Self::Key4),
-            "Key5" => Ok(Self::Key5),
-            "Key6" => Ok(Self::Key6),
-            "Key7" => Ok(Self::Key7),
-            "Key8" => Ok(Self::Key8),
-            "Key9" => Ok(Self::Key9),
+            "Key0" | "0" => Ok(Self::Key0),
+            "Key1" | "1" => Ok(Self::Key1),
+            "Key2" | "2" => Ok(Self::Key2),
+            "Key3" | "3" => Ok(Self::Key3),
+            "Key4" | "4" => Ok(Self::Key4),
+            "Key5" | "5" => Ok(Self::Key5),
+            "Key6" | "6" => Ok(Self::Key6),
+            "Key7" | "7" => Ok(Self::Key7),
+            "Key8" | "8" => Ok(Self::Key8),
+            "Key9" | "9" => Ok(Self::Key9),
             "A" => Ok(Self::A),
             "B" => Ok(Self::B),
             "C" => Ok(Self::C),
@@ -168,25 +169,25 @@ impl FromStr for Keycode {
             "F10" => Ok(Self::F10),
             "F11" => Ok(Self::F11),
             "F12" => Ok(Self::F12),
-            "Escape" => Ok(Self::Escape),
+            "Escape" | "Esc" => Ok(Self::Escape),
             "Space" => Ok(Self::Space),
-            "LControl" => Ok(Self::LControl),
+            "LControl" | "Ctrl" => Ok(Self::LControl),
             "RControl" => Ok(Self::RControl),
-            "LShift" => Ok(Self::LShift),
+            "LShift" | "Shift" => Ok(Self::LShift),
             "RShift" => Ok(Self::RShift),
-            "LAlt" => Ok(Self::LAlt),
+            "LAlt" | "Alt" => Ok(Self::LAlt),
             "RAlt" => Ok(Self::RAlt),
             "Command" => Ok(Self::Command),
             "LOption" => Ok(Self::LOption),
             "ROption" => Ok(Self::ROption),
-            "LMeta" => Ok(Self::LMeta),
+            "LMeta" | "Super" => Ok(Self::LMeta),
             "RMeta" => Ok(Self::RMeta),
-            "Enter" => Ok(Self::Enter),
+            "Enter" | "Return" => Ok(Self::Enter),
             "Up" => Ok(Self::Up),
             "Down" => Ok(Self::Down),
             "Left" => Ok(Self::Left),
             "Right" => Ok(Self::Right),
-            "Backspace" => Ok(Self::Backspace),
+            "Backspace" | "Back Space" => Ok(Self::Backspace),
             "CapsLock" => Ok(Self::CapsLock),
             "Tab" => Ok(Self::Tab),
             "Home" => Ok(Self::Home),
@@ -206,20 +207,21 @@ impl FromStr for Keycode {
             "Numpad8" => Ok(Self::Numpad8),
             "Numpad9" => Ok(Self::Numpad9),
             "NumpadSubtract" => Ok(Self::NumpadSubtract),
-            "NumpadAdd" => Ok(Self::NumpadAdd),
+            "NumpadAdd" | "+" => Ok(Self::NumpadAdd),
             "NumpadDivide" => Ok(Self::NumpadDivide),
-            "NumpadMultiply" => Ok(Self::NumpadMultiply),
-            "Grave" => Ok(Self::Grave),
-            "Minus" => Ok(Self::Minus),
-            "Equal" => Ok(Self::Equal),
-            "LeftBracket" => Ok(Self::LeftBracket),
-            "RightBracket" => Ok(Self::RightBracket),
-            "BackSlash" => Ok(Self::BackSlash),
-            "Semicolon" => Ok(Self::Semicolon),
-            "Apostrophe" => Ok(Self::Apostrophe),
-            "Comma" => Ok(Self::Comma),
-            "Dot" => Ok(Self::Dot),
-            "Slash" => Ok(Self::Slash),
+            "NumpadMultiply" | "*" => Ok(Self::NumpadMultiply),
+            "Grave" | "`" => Ok(Self::Grave),
+            "Minus" | "-" => Ok(Self::Minus),
+            "Equal" | "=" => Ok(Self::Equal),
+            "LeftBracket" | "{" => Ok(Self::LeftBracket),
+            "RightBracket" | "}" => Ok(Self::RightBracket),
+            "BackSlash" | "\\" => Ok(Self::BackSlash),
+            "Semicolon" | ";" => Ok(Self::Semicolon),
+            "Apostrophe" | "'" => Ok(Self::Apostrophe),
+            "Comma" | "," => Ok(Self::Comma),
+            "Dot" | "." => Ok(Self::Dot),
+            "Slash" | "/" => Ok(Self::Slash),
+            "" | " " => Ok(Self::None),
             _ => Err(String::from("failed to parse keycode")),
         }
     }
@@ -236,8 +238,7 @@ impl From<Key> for Keycode {
         let keycodes = value
             .legends
             .iter()
-            .filter_map(|v| v.as_ref().map(|v| Keycode::from_str(&v.text)))
-            .filter_map(|v| v.ok())
+            .filter_map(|v| v.as_ref().and_then(|v| Keycode::from_str(&v.text).ok()))
             .collect::<Vec<_>>();
         *keycodes.first().unwrap()
     }

@@ -10,15 +10,18 @@ fn main() -> Result<(), eframe::Error> {
   [ { "a": 7 }, "Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "Back Space" ],
   [ "Esc", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'" ],
   [ "Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "Return" ],
-  [ "", "Ctrl", "Alt", "Super", "&dArr;", { "w": 2 }, "", "&uArr;", "&larr;", "&darr;", "&uarr;", "&rarr;" ]
+  [ " ", "Ctrl", "Alt", "Super", ";", { "w": 2 }, " ", ";", ";", ";", ";", ";" ]
 ]"#,
     ).unwrap();
     let keyboard = KeyboardWidget::new(360. / 260., keyboard_layout);
 
-    let native_options = eframe::NativeOptions::default();
+    let options = eframe::NativeOptions {
+        ..Default::default()
+    };
+
     eframe::run_native(
         "Keyboard Heatmap",
-        native_options,
+        options,
         Box::new(|_| Box::new(App::new(keyboard))),
     )
 }
