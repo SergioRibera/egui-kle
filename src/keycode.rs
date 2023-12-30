@@ -5,9 +5,10 @@ use std::str::FromStr;
 use kle_serial::f32::Key;
 
 /// A list of supported keys that we can query from the OS. Outside of mod.
-#[derive(Debug, Eq, PartialEq, Hash, Clone, Copy)]
+#[derive(Debug, Eq, PartialEq, Hash, Clone)]
 #[allow(missing_docs)]
 pub enum Keycode {
+    Raw(String),
     None,
     Key0,
     Key1,
@@ -222,6 +223,7 @@ impl FromStr for Keycode {
             "Dot" | "." => Ok(Self::Dot),
             "Slash" | "/" => Ok(Self::Slash),
             "" | " " => Ok(Self::None),
+            v if !v.is_empty() => Ok(Self::Raw(v.to_string())),
             _ => Err(String::from("failed to parse keycode")),
         }
     }
@@ -229,6 +231,9 @@ impl FromStr for Keycode {
 
 impl ToString for Keycode {
     fn to_string(&self) -> String {
+        if let Keycode::Raw(v) = self {
+            return v.clone();
+        }
         format!("{self:?}")
     }
 }
@@ -240,6 +245,6 @@ impl From<Key> for Keycode {
             .iter()
             .filter_map(|v| v.as_ref().and_then(|v| Keycode::from_str(&v.text).ok()))
             .collect::<Vec<_>>();
-        *keycodes.first().unwrap()
+        keycodes.first().unwrap().clone()
     }
 }

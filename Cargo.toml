@@ -5,13 +5,13 @@ edition = "2021"
 
 [features]
 default = ["serde"]
-serde = ["dep:serde", "serde_json"]
+serde = ["dep:serde"]
 
 [dependencies]
 egui = "0.24.1"
 kle-serial = "0.3.0"
 serde = { version = "1.0.193", optional = true, features = ["derive"] }
-serde_json = { version = "1.0.108", optional = true }
 
 [dev-dependencies]
 eframe = "0.24.1"
+serde_json = "1.0.108"
