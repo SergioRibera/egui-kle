@@ -25,7 +25,7 @@ impl From<Keyboard> for KeyboardWidget {
 }
 
 impl KeyboardWidget {
-    pub fn draw(&mut self, map: &mut PressTimesMap, ui: &mut Ui) {
+    pub fn draw(&mut self, ui: &mut Ui, map: Option<&PressTimesMap>) {
         let Pos2 { x: min_x, y: min_y } = ui.min_rect().min;
         let gap = 2.;
         let key_scale = 60.;
@@ -43,7 +43,11 @@ impl KeyboardWidget {
                     min_y + normalized_y + normalized_height,
                 ),
             };
-            let times = map.get_key_times(text_from_key(key.clone()));
+            let times = if let Some(map) = map {
+                map.get_key_times(text_from_key(key.clone()))
+            } else {
+                0
+            };
             KeyBox::new(key.clone(), times).ui(ui, rect);
         });
     }

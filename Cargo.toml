@@ -8,6 +8,7 @@ default = ["serde"]
 serde = ["dep:serde"]
 
 [dependencies]
+dashmap = "5.5.3"
 egui = "0.24.1"
 kle-serial = "0.3.0"
 serde = { version = "1.0.193", optional = true, features = ["derive"] }

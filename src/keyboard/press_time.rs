@@ -1,22 +1,22 @@
 use std::fmt::Debug;
 
-use egui::ahash::HashMap;
+use dashmap::DashMap;
 use kle_serial::f32::Key;
 
-#[derive(Default, Debug)]
+#[derive(Clone, Default, Debug)]
 pub struct PressTimesMap {
-    map: HashMap<String, u32>,
+    map: DashMap<String, u32>,
 }
 
 impl PressTimesMap {
-    pub fn key_press<T: Debug>(&mut self, key: T) {
+    pub fn key_press<T: Debug>(&self, key: T) {
         self.map
             .entry(format!("{key:?}"))
             .and_modify(|old| *old += 1)
             .or_insert(0);
     }
 
-    pub fn key_release<T: Debug>(&mut self, key: T) {
+    pub fn key_release<T: Debug>(&self, key: T) {
         self.map
             .entry(format!("{key:?}"))
             .and_modify(|old| {
@@ -28,7 +28,7 @@ impl PressTimesMap {
     }
 
     pub fn get_key_times(&self, key: String) -> u32 {
-        self.map.get(&key).map(|&v| v).unwrap_or_default()
+        self.map.get(&key).map(|v| *v).unwrap_or_default()
     }
 }
 

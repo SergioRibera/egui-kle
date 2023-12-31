@@ -1,5 +1,3 @@
-use std::sync::{Arc, Mutex};
-
 use egui::Color32;
 use egui_keyboard::press_time::PressTimesMap;
 use egui_keyboard::KeyboardWidget;
@@ -41,7 +39,7 @@ fn main() -> Result<(), eframe::Error> {
 }
 
 struct App {
-    press_map: Arc<Mutex<PressTimesMap>>,
+    press_map: PressTimesMap,
     keyboard: KeyboardWidget,
 }
 
@@ -64,19 +62,18 @@ impl eframe::App for App {
                 bottom: 30.,
             })
             .fill(Color32::WHITE);
-        let mut press_map = self.press_map.lock().unwrap();
 
         egui::CentralPanel::default().frame(frame).show(ctx, |ui| {
             ui.input(|i| {
                 i.events.iter().for_each(|e| {
                     if let egui::Event::Key { key, pressed, .. } = e {
                         if *pressed {
-                            press_map.key_press(key);
+                            self.press_map.key_press(key);
                         }
                     }
                 })
             });
-            self.keyboard.draw(&mut press_map, ui)
+            self.keyboard.draw(ui, Some(&self.press_map))
         });
     }
 }
