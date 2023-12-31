@@ -8,28 +8,24 @@ pub fn sigmoid(times: u32) -> f32 {
 }
 
 pub fn hue_from_rgb(r: u8, g: u8, b: u8) -> f32 {
-   let r = r as f32 / 255.0;
-   let g = g as f32 / 255.0;
-   let b = b as f32 / 255.0;
+    let r = r as f32 / 255.0;
+    let g = g as f32 / 255.0;
+    let b = b as f32 / 255.0;
 
-   let max = r.max(g.max(b));
-   let min = r.min(g.min(b));
-   let delta = max - min;
+    let max = r.max(g.max(b));
+    let min = r.min(g.min(b));
+    let delta = max - min;
 
-   let hue = match max {
-       _ if max == min => 0.0,
-       _ if max == r => (((g - b) / delta) % 6.0) * 60.0,
-       _ if max == g => (((b - r) / delta) + 2.0) * 60.0,
-       _ => (((r - g) / delta) + 4.0) * 60.0,
-   };
+    let hue = match max {
+        _ if max == min => 0.0,
+        _ if max == r => (((g - b) / delta) % 6.0) * 60.0,
+        _ if max == g => (((b - r) / delta) + 2.0) * 60.0,
+        _ => (((r - g) / delta) + 4.0) * 60.0,
+    };
 
-   let hue = if hue < 0.0 {
-       hue + 360.0
-   } else {
-       hue
-   };
+    let hue = if hue < 0.0 { hue + 360.0 } else { hue };
 
-   hue / 360.
+    hue / 360.
 }
 
 /// Decides color of the key by hue (as a theme) and times key pressed
