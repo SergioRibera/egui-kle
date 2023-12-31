@@ -1,7 +1,4 @@
-use std::sync::{Arc, Mutex};
-
 use egui::Color32;
-use egui_kle::press_time::PressTimesMap;
 use egui_kle::KeyboardWidget;
 
 fn main() -> Result<(), eframe::Error> {
@@ -11,10 +8,10 @@ fn main() -> Result<(), eframe::Error> {
 [ "Esc", "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'" ],
 [ "Shift", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/", "Return" ],
 [ " ", "Ctrl", "Alt", "Super", ";", { "w": 2 }, " ", ";", ";", ";", ";", ";" ]
-]"#
+]"#,
     )
     .unwrap();
-    let keyboard = KeyboardWidget::new(220. / 360., keyboard_layout);
+    let keyboard = KeyboardWidget::new(keyboard_layout);
 
     let options = eframe::NativeOptions {
         ..Default::default()
@@ -28,16 +25,12 @@ fn main() -> Result<(), eframe::Error> {
 }
 
 struct App {
-    press_map: Arc<Mutex<PressTimesMap>>,
     keyboard: KeyboardWidget,
 }
 
 impl App {
     pub fn new(keyboard: KeyboardWidget) -> Self {
-        Self {
-            keyboard,
-            press_map: Default::default(),
-        }
+        Self { keyboard }
     }
 }
 
@@ -51,15 +44,9 @@ impl eframe::App for App {
                 bottom: 30.,
             })
             .fill(Color32::WHITE);
-        let mut press_map = self.press_map.lock().unwrap();
 
         egui::CentralPanel::default()
             .frame(frame)
-            .show(ctx, |ui| {
-                if ui.input(|i| i.key_down(egui::Key::Tab)) {
-                    press_map.key_press(egui_kle::Keycode::Tab);
-                }
-                self.keyboard.draw(&mut press_map, ui)
-            });
+            .show(ctx, |ui| self.keyboard.draw(ui, None));
     }
 }
