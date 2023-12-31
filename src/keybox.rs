@@ -1,4 +1,4 @@
-use egui::{Align2, Color32, Rect, Sense, Stroke, Ui, Pos2};
+use egui::{Align2, Color32, Pos2, Rect, Sense, Stroke, Ui};
 use kle_serial::f32::Key;
 
 use crate::color::{get_color, get_strike_color, hue_from_rgb};
@@ -35,15 +35,15 @@ pub struct KeyBox {
     press_times: u32,
     hue: f32,
 
+    scale: f32,
     width: f32,
     height: f32,
 }
 
 impl KeyBox {
-    pub fn new(key: Key, press_times: u32) -> KeyBox {
-        let width = key.width * 60.;
-        let height = key.height * 60.;
-
+    pub fn new(key: Key, scale: f32, press_times: u32) -> KeyBox {
+        let width = key.width * scale;
+        let height = key.height * scale;
 
         let c = key.color;
         let hue = hue_from_rgb(c.r, c.g, c.b);
@@ -51,6 +51,7 @@ impl KeyBox {
         Self {
             key,
             hue,
+            scale,
             width,
             height,
             press_times,
@@ -58,27 +59,31 @@ impl KeyBox {
             stroke_width: 2.0,
         }
     }
-}
-impl KeyBox {
     pub fn ui(&self, ui: &mut Ui, rect: Rect) {
         let _resp = ui.allocate_rect(rect, Sense::hover());
+        let available_area = rect.max.x - rect.min.x;
+        let rounding = self.rounding * (self.scale / available_area);
         let filled_color = get_color(self.hue, self.press_times);
-        ui.painter().rect_filled(rect, self.rounding, filled_color);
-        self.key.legends.iter().enumerate().for_each(|(i, key)| {
-            if let Some(key) = key {
-                ui.painter().text(
-                    calc_pos(rect, i, key.size),
-                    Align2::LEFT_BOTTOM,
-                    &key.text,
-                    egui::FontId::monospace(key.size as f32 * 4.),
-                    Color32::from_rgb(key.color.r, key.color.g, key.color.b),
-                );
-            }
-        });
+
+        ui.painter().rect_filled(rect, rounding, filled_color);
+
+        if available_area >= 40. {
+            self.key.legends.iter().enumerate().for_each(|(i, key)| {
+                if let Some(key) = key {
+                    ui.painter().text(
+                        calc_pos(rect, i, key.size),
+                        Align2::LEFT_BOTTOM,
+                        &key.text,
+                        egui::FontId::monospace(key.size as f32 * 4. * self.scale / available_area),
+                        Color32::from_rgb(key.color.r, key.color.g, key.color.b),
+                    );
+                }
+            });
+        }
 
         ui.painter().rect_stroke(
             rect,
-            self.rounding,
+            rounding,
             Stroke {
                 width: self.stroke_width,
                 color: get_strike_color(filled_color),
