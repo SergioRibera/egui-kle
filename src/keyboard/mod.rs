@@ -46,7 +46,7 @@ impl KeyboardWidget {
             let times = if let Some(map) = map {
                 map.get_key_times(text_from_key(key.clone()))
             } else {
-                0
+                20
             };
             KeyBox::new(key.clone(), times).ui(ui, rect);
         });
