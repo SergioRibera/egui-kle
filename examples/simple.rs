@@ -1,8 +1,8 @@
 use std::sync::{Arc, Mutex};
 
 use egui::Color32;
-use egui_keyboard::press_time::PressTimesMap;
-use egui_keyboard::KeyboardWidget;
+use egui_kle::press_time::PressTimesMap;
+use egui_kle::KeyboardWidget;
 
 fn main() -> Result<(), eframe::Error> {
     let keyboard_layout = serde_json::from_str(
@@ -57,7 +57,7 @@ impl eframe::App for App {
             .frame(frame)
             .show(ctx, |ui| {
                 if ui.input(|i| i.key_down(egui::Key::Tab)) {
-                    press_map.key_press(egui_keyboard::Keycode::Tab);
+                    press_map.key_press(egui_kle::Keycode::Tab);
                 }
                 self.keyboard.draw(&mut press_map, ui)
             });

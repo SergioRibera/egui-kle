@@ -1,6 +1,6 @@
 use egui::Color32;
-use egui_keyboard::press_time::PressTimesMap;
-use egui_keyboard::KeyboardWidget;
+use egui_kle::press_time::PressTimesMap;
+use egui_kle::KeyboardWidget;
 
 fn main() -> Result<(), eframe::Error> {
     let keyboard_layout = serde_json::from_str(
