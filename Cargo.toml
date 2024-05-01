@@ -2,6 +2,27 @@
 name = "egui_kle"
 version = "0.1.0"
 edition = "2021"
+description = "Keyboard Widget use KLE serial"
+categories = ["keyboard", "ui"]
+keywords = ["ui", "egui", "keyboard", "layout", "widget", "kle"]
+authors = ["Sergio Ribera"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/SergioRibera/egui-kle"
+homepage = "https://github.com/SergioRibera/egui-kle"
+readme = "Readme.md"
+include = ["**/**/*.rs", "Cargo.toml", "rust-toolchain.toml", "rustfmt.toml"]
+exclude = ["examples/"]
+
+[profile.dev]
+opt-level = 1
+incremental = true
+
+[profile.release]
+strip = true
+lto = "thin"
+panic = 'abort'
+opt-level = 3
+codegen-units = 1
 
 [features]
 default = ["serde"]
